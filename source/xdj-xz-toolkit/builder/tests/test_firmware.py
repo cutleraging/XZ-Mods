@@ -7,9 +7,9 @@ class FirmwareTests(unittest.TestCase):
     def test_sector_roundtrip_and_iso_members(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary);tree=root/'tree'
-            runtime=root/'runtime.so';runtime.write_bytes(b'fixture-runtime')
-            receiver=root/'receiver.so';receiver.write_bytes(b'fixture-receiver')
-            bootstrap=root/'boot.sh';bootstrap.write_bytes(b'#!/bin/sh\necho fixture\n')
+            runtime=root/'runtime/libxz-mods.so';runtime.parent.mkdir();runtime.write_bytes(b'fixture-runtime')
+            receiver=root/'runtime/libxz-receiver.so';receiver.write_bytes(b'fixture-receiver')
+            bootstrap=root/'bootstrap.sh';bootstrap.write_bytes(b'#!/bin/sh\necho fixture\n')
             key=bytes(range(32))
             expected=firmware.stage_payload(tree,b'fixture-application',runtime,receiver,bootstrap)
             image=firmware.author_image(tree,key)

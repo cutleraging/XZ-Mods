@@ -27,5 +27,10 @@ int main(void){
     assert(xz_clock_gettime_compat(INT_MAX,&preserved)==-1&&errno==EINVAL);
     assert(preserved.tv_sec==123&&preserved.tv_nsec==456);
     errno=0;assert(xz_clock_gettime_compat(CLOCK_MONOTONIC,NULL)==-1&&errno==EFAULT);
-    puts("PASS syscall kernel-long to libc-timespec conversion, real clock agreement, bounded values and failure preservation");return 0;
+#ifdef __linux__
+    puts("PASS syscall kernel-long to libc-timespec conversion, real clock agreement, bounded values and failure preservation");
+#else
+    puts("PASS native host clock agreement, bounded values and failure preservation");
+#endif
+    return 0;
 }

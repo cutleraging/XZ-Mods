@@ -1,6 +1,9 @@
 /* SPDX-License-Identifier: MIT */
 #define _FILE_OFFSET_BITS 64
 #define _POSIX_C_SOURCE 200809L
+#ifdef __APPLE__
+#define _DARWIN_C_SOURCE 1
+#endif
 #include "stem_media.h"
 #include <limits.h>
 #include <fcntl.h>
@@ -10,6 +13,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __APPLE__
+#include <alloca.h>
+#endif
 #include "aiff_reader.h"
 #define DR_FLAC_NO_OGG
 #include "vendor/dr_libs/dr_flac.h"
@@ -67,8 +73,13 @@ int xz_media_identify(int fd, struct xz_media_identity *out) {
 #else
     struct stat s;
     if (fstat(fd, &s) || !S_ISREG(s.st_mode) || s.st_size <= 0) return 0;
+#ifdef __APPLE__
+    *out = (struct xz_media_identity){s.st_dev, s.st_ino, (uint64_t)s.st_size,
+        s.st_mtimespec.tv_sec, s.st_ctimespec.tv_sec, s.st_mtimespec.tv_nsec, s.st_ctimespec.tv_nsec};
+#else
     *out = (struct xz_media_identity){s.st_dev, s.st_ino, (uint64_t)s.st_size,
         s.st_mtim.tv_sec, s.st_ctim.tv_sec, s.st_mtim.tv_nsec, s.st_ctim.tv_nsec};
+#endif
     return 1;
 #endif
 }

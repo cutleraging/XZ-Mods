@@ -1,5 +1,12 @@
 # XZ Mods
 
+**Four-deck fork:** this branch adopts upstream beta's two native players plus
+two onboard software players, with CH3/CH4 audio over a USB loopback cable.
+It adds Mac host verification and a checked loader-staging command with the
+four-deck mixer-order view selected. Start with
+[the fork setup and validation notes](FOUR-DECK-FORK.md). Physical testing on
+Ronald's mixer remains pending. The upstream release information below is retained.
+
 XZ Mods is a desktop app for preparing XDJ-XZ USB loaders, saved settings,
 and stems. It targets firmware 1.26.
 

@@ -8,6 +8,8 @@ rbp.patched
 *.UPD
 *.upd
 XDJXZ_v126.zip
+autoexec.bin
+four-deck-build/
 
 __pycache__/
 .opus-staging/
