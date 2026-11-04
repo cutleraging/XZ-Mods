@@ -111,6 +111,36 @@ On Mac, use a canonical temporary directory whose parents are not symlinks, such
 as a directory under `/private/tmp`, via `TMPDIR`. The resource verifier retains
 its rejection of symlinked paths.
 
+## Check the exported test music
+
+Decks 3/4 resolve tracks through `PIONEER/rekordbox/export.pdb`. Copying audio
+files to the drive root does not create that database. AAC/M4A files cannot play
+on those decks. Import and analyse the four supported test tracks in rekordbox,
+then use its USB export workflow while preserving the loader and settings.
+
+For the first bench, use four distinct stereo 16-bit PCM WAVs at 44.1 kHz. Check
+the export against those local originals before ejecting the USB:
+
+```sh
+python tools/check_four_deck_music.py \
+  --volume /Volumes/XDJ-XZ \
+  --expected-wavs /absolute/path/to/four-local-wavs \
+  --output four-deck-build/music-check.json
+```
+
+This reads the existing Device Library PDB using the bundled parser, follows its
+audio references, validates each WAV and matches the PCM hashes to the four
+expected streams. It rejects missing files, truncated audio, duplicate or wrong
+matches, path traversal and symlinks, and reports input changes during the check.
+The report must be new and outside the USB. No drive files are written.
+An export containing only M4A references cannot pass by sharing the WAV titles.
+
+`music_ready` means that the four expected WAVs have unique matching database
+entries and complete matching audio. It does not qualify beat-grid analysis,
+playback, physical routing, controls, displays or hardware timing. The WAV-only
+contract is for this first bench; the runtime's other supported formats remain
+described in the manual. Synthetic export regression checks run on both CI hosts.
+
 ## Verified scope and hardware acceptance
 
 The initial local Mac verification passes the player, clock, deck-selection and
