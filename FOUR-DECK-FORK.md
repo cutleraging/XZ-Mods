@@ -1,5 +1,9 @@
 # Four simultaneous decks on the XDJ-XZ
 
+2026-11-04: Ronald confirms four tracks playing together through separate mixer
+channels on his XDJ-XZ. See the [AZ reference comparison and consistency work](docs/FOUR-DECK-SEAMLESS.md)
+for the next improvements and the remaining timing/control/endurance checks.
+
 This fork adopts the onboard four-deck implementation from upstream `beta` at
 [`859ad70747174983537b21cf87a8b800b8d18274`](https://github.com/OpticMystic/XZ-Mods/tree/859ad70747174983537b21cf87a8b800b8d18274).
 It adds Mac host verification and a staging command that selects the existing
