@@ -18,7 +18,11 @@ a=p.parse_args();root=Path(__file__).resolve().parent
 a.output.mkdir(parents=True,exist_ok=False)
 with tempfile.TemporaryDirectory(prefix='xz-ui-preview-') as temporary:
     exe=Path(temporary)/'preview.exe'
-    subprocess.run([str(Path(a.zig).resolve()),'cc','-O2','-std=c11','-Wall','-Wextra','-Werror',
+    # Zig's Mach-O linker does not implement the targeted -U allowance for these
+    # three optional weak hooks. Apple's native linker preserves their NULL fallback.
+    compiler=([shutil.which('clang')] if sys.platform=='darwin' else [str(Path(a.zig).resolve()),'cc'])
+    if not compiler[0]:raise SystemExit('Mac previews require the Xcode command line tools (clang).')
+    subprocess.run([*compiler,'-O2','-std=c11','-Wall','-Wextra','-Werror',
         *(['-Wl,-U,_'+name for name in ('sh_num','sh_num_width','sh_num_drawable')] if sys.platform=='darwin' else []),
         *(str(root/name) for name in UI_SOURCES),str(root/'preview.c'),'-o',str(exe)],check=True)
     subprocess.run([str(exe),str(a.output.resolve())],check=True)
