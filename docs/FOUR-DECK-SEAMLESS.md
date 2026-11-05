@@ -6,7 +6,9 @@ Ronald confirms that four tracks play together through separate mixer channels
 on his XDJ-XZ. This is direct user-reported hardware evidence for the core
 four-deck result. Detailed control, timing, endurance and stock-return results
 remain unmeasured here. This branch has not changed the player runtime or the
-boot USB.
+boot USB at the initial research checkpoint. Subsequent work is recorded in
+[the timing correction and display trial](FOUR-DECK-TIMING.md); that record
+supersedes the initial no-runtime-change status for the development branch.
 
 ## What the AZ comparison establishes
 

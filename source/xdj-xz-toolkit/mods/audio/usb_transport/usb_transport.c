@@ -361,6 +361,7 @@ static int service(xz_usb_transport *t) {
         ++t->completed_sequence;
         for (unsigned i = 0; i < PACKETS; ++i) if (s->iso[i].status) { fail(t, XZ_USB_IO, EIO); return 0; }
         t->live.wire_completed_frames += (unsigned)s->u.buffer_length / OUT_BYTES;
+        t->live.wire_observed_us = t->io->now();
         for (unsigned d = 0; d < 2; ++d) {
             xz_usb_deck_position *p = &t->live.deck[d];
             if (s->deck[d].generation != p->applied_generation) continue;

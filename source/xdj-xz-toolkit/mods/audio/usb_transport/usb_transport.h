@@ -38,6 +38,10 @@ typedef struct {
     uint64_t wire_submitted_frames, wire_completed_frames, input_frames;
     uint64_t input_urbs, output_urbs, fallback_packets, feedback_replaced;
     uint64_t maximum_completion_gap_us;
+    /* CLOCK_MONOTONIC time when the USB worker reaped wire_completed_frames.
+     * Paired with that prefix in the same snapshot; zero before its first output.
+     * This is a host observation, not a USB device or audible/DAC timestamp. */
+    uint64_t wire_observed_us;
 } xz_usb_position;
 
 /* Control worker only. Validates an existing tmpfs character node and device,

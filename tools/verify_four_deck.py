@@ -64,6 +64,8 @@ def main():
         "deck-select": ["deck_select.c", "test_deck_select.c"],
         "deck-switch-idle": ["deck_select.c", "tests/test_idle_jog_shift.c"],
         "player": PLAYER + ["test_extra_player.c"],
+        "sync-engine": PLAYER + ["tests/test_sync_engine.c"],
+        "sync-clock-skew": PLAYER + ["tests/probe_sync_clock_skew.c"],
     }
     skipped = []
     if sys.platform == "linux":
@@ -109,13 +111,13 @@ def main():
             binary = out / name
             flags = (["-DXZ_PLACEMENT_CONNECTOR_TEST", "-DUSB_MAJOR=1", "-DPOLL_DOWN_MS=50",
                       "-DROUTE_EVENT_SAFETY_MS=50", "-DPOLL_UP_MS=5"] if name == "connector" else [])
-            if sys.platform == "darwin" and name == "player":
+            if sys.platform == "darwin" and name in ("player", "sync-engine", "sync-clock-skew"):
                 # Mach-O needs explicit allowance for absent optional ELF weak
                 # hooks. Permit only the five diary hooks, never arbitrary symbols.
                 flags += ["-Wl,-U,_xz_diary_" + hook for hook in
                           ("busy_begin", "busy_end", "audio", "notice", "notice_code")]
             run(name + "-build", common + flags + [str(MODS / s) for s in names] + ["-lm", "-o", str(binary)])
-            run(name, [str(binary)] + ([str(data)] if name == "player" else []))
+            run(name, [str(binary)] + ([str(data)] if name in ("player", "sync-engine", "sync-clock-skew") else []))
         # A passing suite must actually enforce back-cue pause, not just execute.
         before = "if (d->state == XZ_XP_PLAYING || d->state == XZ_XP_ENDED) { jump(d, d->cue, now); d->state = XZ_XP_CUED; }"
         after = "if (d->state == XZ_XP_PLAYING || d->state == XZ_XP_ENDED) { jump(d, d->cue, now); }"
@@ -131,6 +133,17 @@ def main():
         run("back-cue-mutant-build", common + optional + [str(mutant)] +
             [str(MODS / s) for s in PLAYER[1:] + ["test_extra_player.c"]] + ["-lm", "-o", str(binary)])
         run("back-cue-mutant-rejected", [str(binary), str(data)], "Assertion")
+        # Discarding the transport timestamp must reproduce the slow-clock drift.
+        timed = "wire_origin_observe(p,route,position->wire_completed_frames,*at,position->wire_observed_us)"
+        legacy = "wire_origin_observe(p,route,position->wire_completed_frames,*at,0)"
+        if original.count(timed) != 1:
+            raise ValueError("Clock timestamp mutation no longer matches exactly once")
+        mutant = out / "clock-skew-mutant.c"
+        mutant.write_text(original.replace(timed, legacy))
+        binary = out / "clock-skew-mutant"
+        run("clock-skew-mutant-build", common + optional + [str(mutant)] +
+            [str(MODS / s) for s in PLAYER[1:] + ["tests/probe_sync_clock_skew.c"]] + ["-lm", "-o", str(binary)])
+        run("clock-skew-mutant-rejected", [str(binary), str(data)], "Assertion")
         current = {str(p.relative_to(APP)): digest(p) for p in sorted(files)}
         if pins != current:
             raise RuntimeError("Inputs changed during verification")

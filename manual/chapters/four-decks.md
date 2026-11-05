@@ -412,6 +412,8 @@ The detail panel adds a line about the reason, for example:
 
 ## Limits
 
+For a repeatable sync check, load the same analysed track on decks 1 and 3. Use matching tempo settings, and turn on SYNC and QUANTIZE. Note which deck is master and whether an audible offset stays fixed or grows. Repeat on decks 2 and 4. Different tracks can have different beat-grid errors, even when the displayed BPM matches.
+
 - Decks 1 and 2 must be stopped or paused while decks 3 and 4 start.
 - Keep the music stick connected while you play. Decks 3 and 4 read from it all the time.
 - Decks 3 and 4 play WAV, AIFF, FLAC, MP3 and Ogg Vorbis files. AAC and M4A files do not play on decks 3 and 4.

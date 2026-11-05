@@ -177,6 +177,12 @@ static void test_clock_position_and_failure(void) {
     assert(f.write == 32 && f.claimed && f.alt_one);
     step(t, 32); assert(load32(&t->state) == XZ_USB_RUNNING);
     assert(t->live.deck[0].completed_frames == 0 && t->live.wire_completed_frames > 0);
+    assert(t->live.wire_observed_us && t->live.wire_observed_us <= f.time);
+    publish(t,0);
+    xz_usb_position timed={0};assert(xz_usb_transport_position(t,&timed)==XZ_USB_OK);
+    uint64_t stamp=timed.wire_observed_us,prefix=timed.wire_completed_frames;
+    f.time+=1234;assert(xz_usb_transport_position(t,&timed)==XZ_USB_OK);
+    assert(timed.wire_observed_us==stamp&&timed.wire_completed_frames==prefix);
     float pcm[512]; constant(pcm, 256, .25f);
     assert(xz_usb_transport_submit(t, XZ_USB_DECK_3, 1, pcm, 256, 48000) == XZ_USB_OK);
     step(t, 8); assert(t->live.deck[0].staged_frames == 256 && t->live.deck[0].completed_frames == 0);

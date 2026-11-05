@@ -3,7 +3,7 @@ name: Four-deck host contracts
 on:
   workflow_dispatch:
   push:
-    branches: [four-deck-hardware]
+    branches: [four-deck-hardware, four-deck-seamless]
   pull_request:
     paths:
       - 'source/xdj-xz-toolkit/mods/**'

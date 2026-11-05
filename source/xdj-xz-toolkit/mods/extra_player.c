@@ -361,10 +361,9 @@ struct xz_xp_players {
  struct sync_clock clock[XZ_EXTRA_DECKS]; /* copies only, protected by publish_lock */
  xz_usb_position sync_position;
  uint32_t sync_position_route,sync_position_at;
- /* When the transport's completed wire count was current: wire frame W played at about
-    wire_origin_ms + W/44.1 ms. A worker sees a new position up to a pass (plus the millisecond
-    clock) after the transport published it, so the earliest observation per wire frame is the
-    estimate. publish_lock. */
+ /* Maps wire prefixes to host observation time. The current transport supplies the paired
+    reap timestamp; sinks without one retain the lower-envelope estimate. Neither source
+    measures the DAC's audible presentation time. publish_lock. */
  double wire_origin_ms; uint64_t wire_origin_seen; uint32_t wire_origin_route,wire_origin_at; int wire_origin_valid;
 };
 #ifdef XZ_XP_SERVICE_PROOF
@@ -3192,11 +3191,21 @@ static void completed_timeline(struct deck *d,const xz_usb_deck_position *q,uint
  d->timeline_sink_frame=q->source_completed_wire_frame<=wire_completed?q->source_completed_wire_frame:0;
  d->timeline_wire_completed=wire_completed;
 }
-/* Lower envelope of (observation time - wire time), allowed to rise 0.5 ms a second for the
-   USB and CPU clocks drifting apart. A new route restarts the wire count. publish_lock. */
-static void wire_origin_observe(struct xz_xp_players *p,uint32_t route,uint64_t wire,uint32_t at){
+/* Prefer the USB worker's paired prefix/time. Re-anchor on each observation so a difference
+   between USB and CPU clock rates cannot accumulate into a false phase lock. The lower
+   envelope remains for sinks which do not supply a transport timestamp. publish_lock. */
+static void wire_origin_observe(struct xz_xp_players *p,uint32_t route,uint64_t wire,uint32_t at,uint64_t observed_us){
  if(!wire)return;
  double sample=(double)at-(double)wire*1000./XZ_USB_RATE;
+ if(observed_us){
+  int32_t age=(int32_t)(at-(uint32_t)(observed_us/1000u));
+  if(age>=-1&&age<=150){
+   double captured=(double)at-age+(double)(observed_us%1000u)/1000.;
+   p->wire_origin_ms=captured-(double)wire*1000./XZ_USB_RATE;
+   p->wire_origin_valid=1;p->wire_origin_route=route;
+   p->wire_origin_seen=wire;p->wire_origin_at=at;return;
+  }
+ }
  if(!p->wire_origin_valid||route!=p->wire_origin_route||wire<p->wire_origin_seen){
   p->wire_origin_ms=sample;p->wire_origin_valid=1;p->wire_origin_route=route;
  }else{
@@ -3214,7 +3223,7 @@ static int wire_time_ms(struct xz_xp_players *p,uint32_t route,uint64_t wire,dou
 }
 static int shared_position(struct xz_xp_players *p,uint32_t route,xz_usb_position *position,uint32_t *at,int observed){
  pthread_mutex_lock(&p->publish_lock);
- if(observed)wire_origin_observe(p,route,position->wire_completed_frames,*at);
+ if(observed)wire_origin_observe(p,route,position->wire_completed_frames,*at,position->wire_observed_us);
  if(observed){
   int newer_route=!p->sync_position_route||(int32_t)(route-p->sync_position_route)>0;
   int current=route==p->sync_position_route&&(int32_t)(*at-p->sync_position_at)>=0&&
