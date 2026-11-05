@@ -1,0 +1,13 @@
+{
+  "schema": "xz-timing-trial-inputs/1",
+  "version": "0.5.1-seamless.1",
+  "source_commit": "11542e10c2b059ea17beaf7dfb8a47bf8ca3d668",
+  "ci_run": "https://github.com/cutleraging/XZ-Mods/actions/runs/41964084393",
+  "base_profile_sha256": "7483ff19664cf305a143a6b1b41580a979810e1cf5a7e3ff1dc4cd5282a80a9c",
+  "base_contract_sha256": "c388bc3ab5fc6cbe24dde9f69a7cb04ab736469e1b9cfbaef41b55f813f40b3a",
+  "base_runtime_sha256": "baba82b889cfd604074f8d5bf794687d447d7fde877bcfb51cba13e46ee43bd9",
+  "runtime_sha256": "5c9d3106b28eb14af2442f1c9e015d536e3a7d4c62a544d2e58d86e8d4fe9e6c",
+  "receiver_sha256": "102cd2978111c21c3957b5197e6ef9ce160f8532ba6e37fb344f9da1e993b772",
+  "module_sha256": "19f44ded027304d3ea62a84c4e325bb422949c2cf2eeaa6e49e40d3f1c635101",
+  "application_sha256": "3a7c6c507ea67b2484d0cbc58136a495374c8ede5eeef1ffdffcfe86c7a3dae3"
+}
