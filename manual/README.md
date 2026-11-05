@@ -30,6 +30,10 @@ reading the figures it lists. Releases run `check` and refuse to package a stale
 
 ## Commands
 
+Use Pillow **12.3.0** with Python 3.10 or later for the reviewed PNG renders.
+Earlier Pillow versions can encode identical pixels into different PNG bytes,
+which makes the image hash check report unrelated changes.
+
 ```
 python tools/build_manual.py render --zig <zig.exe> --out <render-dir>   # a few minutes; never touches an XZ
 python tools/build_manual.py check  --render <render-dir>

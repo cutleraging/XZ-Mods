@@ -51,11 +51,15 @@ These are 90-second synthetic runs, not measured XZ audio. The new regression
 requires error below 1 ms in each of the ten conditions. Discarding the new
 timestamp reproduces the failure and is rejected by the host verifier.
 
-Validation: all 16 Mac host checks pass, including the existing tempo-first
-engine regressions, the new skew cases, and both rejected mutations. The two
-changed production translation units also compile for ARM32 Cortex-A9 against
-glibc 2.13 using Zig 0.16.0. That is object compilation, not a linked deployable
-runtime or a hardware trial. Linux transport/connector checks run in CI.
+Validation: all 16 Mac and 20 Linux host checks pass, including the existing
+tempo-first engine regressions, the new skew cases, both rejected mutations,
+and Linux transport/connector checks. The complete ARM32 Cortex-A9 development
+runtime and paired display bridge also build and pass the builder's ELF/ABI
+inspection in [CI run 41964084393](https://github.com/cutleraging/XZ-Mods/actions/runs/41964084393).
+The development runtime is labelled `0.5.1-seamless.1`, with SHA-256
+`5c9d3106b28eb14af2442f1c9e015d536e3a7d4c62a544d2e58d86e8d4fe9e6c`.
+Its bridge matches the previous paired bridge. These are build/host results;
+the new runtime has not executed on the XZ or been packaged into a verified loader.
 
 Reproduce with `python3 tools/verify_four_deck.py --output NEW_DIRECTORY`.
 The `sync-clock-skew.log` records measurements; `verification.json` records
@@ -77,12 +81,14 @@ shows successful bootstrap/runtime staging, but does not include
 identify which main-wave guard or draw stage failed. Do not relax those guards
 without actual render-state evidence.
 
-The first USB display trial selects Modern (`interface=1`) and mixer-order
+The first USB display trial now selects Modern (`interface=1`) and mixer-order
 four-deck view (`deck_view=2`), preserving the other preferences. The serializer
 also derives the compatible legacy theme value. This uses the existing renderer
 and keeps the exact working audio runtime. It is a reversible alternate display
 path, not a verified repair of the Classic hook. The loader, previous settings
-and startup log were backed up with hash readback before the trial.
+and startup log were backed up with hash readback before the trial. The updated
+settings were read back and the USB safely ejected. Ronald will test it later;
+the Modern display result is pending.
 
 After boot, verify **four enlarged scrolling lanes**, then switch left 1/3 and
 right 2/4 while all tracks play. A successful display trial does not validate
@@ -93,3 +99,14 @@ and 3, with matching tempo, SYNC and QUANTIZE on. Note the master and whether th
 offset stays fixed or grows. This distinguishes the player/clock problem from
 different tracks' beat-grid or BPM errors. Repeat with the candidate runtime
 only after its complete paired build and loader verification.
+
+## Remaining release gate
+
+All 430 previously reviewed screen hashes match fresh source renders with the
+documented Pillow 12.3.0 encoder. The four-deck chapter was reread and its changed
+player-source review updated; no image review hash was changed. The manual
+checker still reports stale navigation videos because their capture inputs
+include the changed player source. Those flows/videos must be regenerated before
+a release. The existing capture driver requires Windows/WSL and the video builder
+expects control-render inputs from an external Blender scene. This checkpoint
+preserves that gate and does not claim a release-ready loader.

@@ -4,6 +4,12 @@
 channels on his XDJ-XZ. See the [AZ reference comparison and consistency work](docs/FOUR-DECK-SEAMLESS.md)
 for the next improvements and the remaining timing/control/endurance checks.
 
+The `four-deck-seamless` branch contains a new timing correction and a built,
+unexecuted ARM development runtime. [Timing results and display trial](docs/FOUR-DECK-TIMING.md)
+distinguish that candidate from the unchanged audio loader on the physical USB.
+The staging command below still requires a verified paired resource bundle;
+it does not automatically package the current source into a new runtime.
+
 This fork adopts the onboard four-deck implementation from upstream `beta` at
 [`859ad70747174983537b21cf87a8b800b8d18274`](https://github.com/OpticMystic/XZ-Mods/tree/859ad70747174983537b21cf87a8b800b8d18274).
 It adds Mac host verification and a staging command that selects the existing

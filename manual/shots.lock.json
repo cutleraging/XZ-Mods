@@ -438,7 +438,7 @@
   "source/xdj-xz-toolkit/mods/diary/format.c": "40801cad49bcbd9568af8ec7be2558f2d528af8811d139e19cc5daaceaa7c7f8",
   "source/xdj-xz-toolkit/mods/diary/runtime.c": "caa516ad5d6b7883640ee332febfdb088ba99a639bf231ec6f7f03e5741e14b4",
   "source/xdj-xz-toolkit/mods/diary/store.c": "3e67c942c2fc84acbf74e89f9f10030f806693771d944c1b7fc440202036c6ac",
-  "source/xdj-xz-toolkit/mods/extra_player.c": "cf41a63198cb707a91976d160a71051bc3aed47923244a5209d25e9b07cd4115",
+  "source/xdj-xz-toolkit/mods/extra_player.c": "080f44a7c478aa572f751d6c7f1120c3f818dceb8c0c39f4070078d5a342312b",
   "source/xdj-xz-toolkit/mods/extra_route_status.h": "f1312b6e407ec423f7d96c0ac9fa16d5155686df778755f6c9e24154a75089cb",
   "source/xdj-xz-toolkit/mods/key/control.c": "e9b6239df26f2368ca4dc9503e5227048a336288dc2bcbf9fa72002e00635145",
   "source/xdj-xz-toolkit/mods/ram/extra.c": "647da1a37cb73c26790aabe92cc097ca6b6fd23faca88b08467939dd33701367",
