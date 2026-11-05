@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 from PIL import Image
 from ui_sources import UI_SOURCES
@@ -18,6 +19,7 @@ a.output.mkdir(parents=True,exist_ok=False)
 with tempfile.TemporaryDirectory(prefix='xz-ui-preview-') as temporary:
     exe=Path(temporary)/'preview.exe'
     subprocess.run([str(Path(a.zig).resolve()),'cc','-O2','-std=c11','-Wall','-Wextra','-Werror',
+        *(['-Wl,-U,_'+name for name in ('sh_num','sh_num_width','sh_num_drawable')] if sys.platform=='darwin' else []),
         *(str(root/name) for name in UI_SOURCES),str(root/'preview.c'),'-o',str(exe)],check=True)
     subprocess.run([str(exe),str(a.output.resolve())],check=True)
 for path in a.output.glob('*.ppm'):
